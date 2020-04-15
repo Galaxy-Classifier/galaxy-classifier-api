@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+
+  redis:
+    image: bitnami/redis:5.0.8
+    environment:
+      - REDIS_PASSWORD=somesecretpassword
+    ports:
+      - "6379:6379"
+    networks:
+      - app-tier
+
+  db:
+    image: bitnami/postgresql:12.2.0
+    environment: 
+      - POSTGRESQL_PASSWORD=somesecretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data-volume:/bitnami/postgresql
+    networks:
+      - app-tier
+
+  api:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "5000:80"
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    driver: bridge
+
+volumes: 
+  postgres-data-volume:
